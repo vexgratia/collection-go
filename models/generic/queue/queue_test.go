@@ -52,7 +52,7 @@ func testBehaviour[T any](t *testing.T, test *TestCase[T]) {
 		testPeek(t, test)
 		testEnqueue(t, test)
 		testDequeue(t, test)
-		testSanitize(t, test)
+		testClear(t, test)
 	})
 }
 func testLen[T any](t *testing.T, test *TestCase[T]) {
@@ -60,20 +60,20 @@ func testLen[T any](t *testing.T, test *TestCase[T]) {
 		func(t *testing.T) {
 			AssertNotPanic(t, func() {
 				length := len(test.queue.Data)
-				AssertEqual(t, test.queue.len(), length)
+				AssertEqual(t, test.queue.Len(), length)
 			})
 		})
 }
 func testIsEmpty[T any](t *testing.T, test *TestCase[T]) {
-	t.Run("isEmpty",
+	t.Run("empty",
 		func(t *testing.T) {
 			AssertNotPanic(t, func() {
 				length := len(test.queue.Data)
 				switch length {
 				case 0:
-					AssertTrue(t, test.queue.isEmpty())
+					AssertTrue(t, test.queue.Empty())
 				default:
-					AssertFalse(t, test.queue.isEmpty())
+					AssertFalse(t, test.queue.Empty())
 				}
 			})
 		})
@@ -81,7 +81,7 @@ func testIsEmpty[T any](t *testing.T, test *TestCase[T]) {
 func testCopy[T any](t *testing.T, test *TestCase[T]) {
 	t.Run("copy",
 		func(t *testing.T) {
-			copy := test.queue.copy()
+			copy := test.queue.Copy()
 			AssertEqual(t, *copy, *test.queue)
 		})
 }
@@ -91,10 +91,10 @@ func testPeek[T any](t *testing.T, test *TestCase[T]) {
 			length := len(test.queue.Data)
 			switch length {
 			case 0:
-				AssertPanic(t, func() { test.queue.peek() })
+				AssertPanic(t, func() { test.queue.Peek() })
 			default:
-				AssertNotPanic(t, func() { test.queue.peek() })
-				peek := test.queue.peek()
+				AssertNotPanic(t, func() { test.queue.Peek() })
+				peek := test.queue.Peek()
 				AssertEqual(t, peek, test.queue.Data[0])
 			}
 		})
@@ -103,7 +103,7 @@ func testEnqueue[T any](t *testing.T, test *TestCase[T]) {
 	t.Run("enqueue",
 		func(t *testing.T) {
 			AssertNotPanic(t, func() {
-				test.queue.enqueue(test.enq)
+				test.queue.Enqueue(test.enq)
 				length := len(test.queue.Data)
 				AssertEqual(t, test.queue.Data[length-1], test.enq)
 			})
@@ -115,22 +115,23 @@ func testDequeue[T any](t *testing.T, test *TestCase[T]) {
 			length := len(test.queue.Data)
 			switch length {
 			case 0:
-				AssertPanic(t, func() { test.queue.dequeue() })
+				AssertPanic(t, func() { test.queue.Dequeue() })
 			default:
 				AssertNotPanic(t, func() {
 					want := test.queue.Data[0]
-					deq := test.queue.dequeue()
+					deq := test.queue.Dequeue()
 					AssertEqual(t, want, deq)
 				})
 			}
 		})
 }
-func testSanitize[T any](t *testing.T, test *TestCase[T]) {
-	t.Run("sanitize",
+func testClear[T any](t *testing.T, test *TestCase[T]) {
+	t.Run("clear",
 		func(t *testing.T) {
 			AssertNotPanic(t, func() {
-				test.queue.sanitize()
-				AssertEqual(t, *test.queue, Queue[T]{make([]T, 0)})
+				want := NewQueue[T]()
+				test.queue.Clear()
+				AssertEqual(t, *test.queue, *want)
 			})
 		})
 }
