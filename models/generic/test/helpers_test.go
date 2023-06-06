@@ -31,7 +31,7 @@ func TestAssertEqual(t *testing.T) {
 		input T
 		want  T
 	}
-	t.Run("integer cases", func(t *testing.T) {
+	t.Run("integer", func(t *testing.T) {
 		cases := []TestCase[int]{
 			{0, 0},
 			{1234, 1234},
@@ -41,7 +41,7 @@ func TestAssertEqual(t *testing.T) {
 			AssertEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("string cases", func(t *testing.T) {
+	t.Run("string", func(t *testing.T) {
 		cases := []TestCase[string]{
 			{"", ""},
 			{"abc123!@#", "abc123!@#"}}
@@ -49,7 +49,7 @@ func TestAssertEqual(t *testing.T) {
 			AssertEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("float64 cases", func(t *testing.T) {
+	t.Run("float64", func(t *testing.T) {
 		cases := []TestCase[float64]{
 			{0.0, 0.0},
 			{123.456, 123.456},
@@ -59,7 +59,7 @@ func TestAssertEqual(t *testing.T) {
 			AssertEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("map cases", func(t *testing.T) {
+	t.Run("map", func(t *testing.T) {
 		cases := []TestCase[map[string]int]{
 			{map[string]int{"a": 1, "b": 2}, map[string]int{"a": 1, "b": 2}},
 		}
@@ -67,7 +67,7 @@ func TestAssertEqual(t *testing.T) {
 			AssertEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("slice cases", func(t *testing.T) {
+	t.Run("slice", func(t *testing.T) {
 		cases := []TestCase[[]int]{
 			{[]int{1, 2, 3}, []int{1, 2, 3}},
 		}
@@ -81,7 +81,7 @@ func TestAssertNotEqual(t *testing.T) {
 		input T
 		want  T
 	}
-	t.Run("integer cases", func(t *testing.T) {
+	t.Run("integer", func(t *testing.T) {
 		cases := []TestCase[int]{
 			{0, 1},
 			{1234, -1234},
@@ -91,7 +91,7 @@ func TestAssertNotEqual(t *testing.T) {
 			AssertNotEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("string cases", func(t *testing.T) {
+	t.Run("string", func(t *testing.T) {
 		cases := []TestCase[string]{
 			{"", "."},
 			{"abc123!@#", "abc123!@# "}}
@@ -99,7 +99,7 @@ func TestAssertNotEqual(t *testing.T) {
 			AssertNotEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("float64 cases", func(t *testing.T) {
+	t.Run("float64", func(t *testing.T) {
 		cases := []TestCase[float64]{
 			{0.0, 0.01},
 			{123.456, 1234.56},
@@ -109,7 +109,7 @@ func TestAssertNotEqual(t *testing.T) {
 			AssertNotEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("map cases", func(t *testing.T) {
+	t.Run("map", func(t *testing.T) {
 		cases := []TestCase[map[string]int]{
 			{map[string]int{"a": 1, "b": 2}, map[string]int{"A": 1, "b": 2}},
 		}
@@ -117,7 +117,7 @@ func TestAssertNotEqual(t *testing.T) {
 			AssertNotEqual(t, test.input, test.want)
 		}
 	})
-	t.Run("slice cases", func(t *testing.T) {
+	t.Run("slice", func(t *testing.T) {
 		cases := []TestCase[[]int]{
 			{[]int{1, 2, 3}, []int{-1, 2, 3}},
 		}
