@@ -3,7 +3,7 @@ package queue
 import (
 	"testing"
 
-	. "github.com/vexgratia/collection-go/models/generic/test"
+	. "github.com/vexgratia/collection-go/test"
 )
 
 type TestCase[T any] struct {
