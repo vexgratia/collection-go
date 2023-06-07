@@ -2,22 +2,32 @@ package pool
 
 type ProcessFunc func()
 
-type TaskState int
+type TaskStatus int
 
 const (
-	TASK_STATE_NEW TaskState = iota
-	TASK_STATE_READY
-	TASK_STATE_IN_PROCESS
-	TASK_STATE_PROCESSED
-	TASK_STATE_RECOVERED
-	TASK_STATE_TERMINATED
-	TASK_STATE_TERMINATED_TIMEOUT
+	TASK_STATUS_NEW TaskStatus = iota
+	TASK_STATUS_READY
+	TASK_STATUS_IN_PROCESS
+	TASK_STATUS_PROCESSED
+	TASK_STATUS_RECOVERED
+	TASK_STATUS_TERMINATED
+	TASK_STATUS_TERMINATED_TIMEOUT
 )
 
-type Task struct {
+type Task[T any] struct {
 	ID      int
 	Name    string
+	Status  TaskStatus
 	Process ProcessFunc
-	State   TaskState
-	Data    any
+	Data    T
+}
+
+func NewTask[T any](id int, name string, process ProcessFunc, data T) *Task[T] {
+	return &Task[T]{
+		ID:      id,
+		Name:    name,
+		Process: process,
+		Status:  TASK_STATUS_NEW,
+		Data:    data,
+	}
 }
