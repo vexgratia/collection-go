@@ -15,28 +15,40 @@ const (
 )
 
 type Thread[T any] struct {
-	ID     int
-	Status ThreadStatus
-	Config ThreadConfig[T]
-	CTX    context.Context
-	Output chan *Task[T]
-}
-type ThreadConfig[T any] struct {
-	Generate func(current uint64, example T) (*Task[T], error)
-	Example  T
+	ID        int
+	Generator *Generator[T]
+	Status    ThreadStatus
+	CTX       context.Context
+	Output    chan *Task[T]
 }
 
-func NewThread[T any](id int, config ThreadConfig[T]) *Thread[T] {
+func NewThread[T any](id int) *Thread[T] {
 	return &Thread[T]{
 		ID:     id,
 		Status: THREAD_STATUS_NEW,
-		Config: config,
 		Output: make(chan *Task[T]),
 	}
 }
-func NewThreadConfig[T any](generate func(current uint64, example T) (*Task[T], error), example T) *ThreadConfig[T] {
-	return &ThreadConfig[T]{
-		Generate: generate,
-		Example:  example,
+
+func (t *Thread[T]) Start() {
+	for {
+		select {
+		case <-t.CTX.Done():
+			break
+		default:
+			t.Generate()
+		}
 	}
+}
+func (t *Thread[T]) Generate() error {
+	current := t.Generator.State.Current.Add(1)
+	if current >= t.Generator.State.Goal.Load() {
+		return nil
+	}
+	task, err := t.Generator.Generate(current, t.Generator.Example)
+	if err != nil {
+		return err
+	}
+	t.Output <- task
+	return nil
 }

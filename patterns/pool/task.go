@@ -1,7 +1,5 @@
 package pool
 
-type ProcessFunc func()
-
 type TaskStatus int
 
 const (
@@ -9,6 +7,7 @@ const (
 	TASK_STATUS_READY
 	TASK_STATUS_IN_PROCESS
 	TASK_STATUS_PROCESSED
+	TASK_STATUS_ERROR
 	TASK_STATUS_RECOVERED
 	TASK_STATUS_TERMINATED
 	TASK_STATUS_TERMINATED_TIMEOUT
@@ -18,11 +17,11 @@ type Task[T any] struct {
 	ID      int
 	Name    string
 	Status  TaskStatus
-	Process ProcessFunc
+	Process func() error
 	Data    T
 }
 
-func NewTask[T any](id int, name string, process ProcessFunc, data T) *Task[T] {
+func NewTask[T any](id int, name string, process func() error, data T) *Task[T] {
 	return &Task[T]{
 		ID:      id,
 		Name:    name,

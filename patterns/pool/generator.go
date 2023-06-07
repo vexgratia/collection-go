@@ -18,12 +18,13 @@ const (
 )
 
 type Generator[T any] struct {
-	ID           int
-	Name         string
-	State        *GeneratorState
-	CTX          context.Context
-	ThreadConfig ThreadConfig[T]
-	Threads      []*Thread[T]
+	ID       int
+	Name     string
+	State    *GeneratorState
+	CTX      context.Context
+	Threads  []*Thread[T]
+	Generate func(current uint64, example T) (*Task[T], error)
+	Example  T
 }
 type GeneratorState struct {
 	Status  GeneratorStatus
@@ -31,14 +32,13 @@ type GeneratorState struct {
 	Goal    atomic.Uint64
 }
 
-func NewGenerator[T any](id int, name string, config ThreadConfig[T]) *Generator[T] {
+func NewGenerator[T any](id int, name string) *Generator[T] {
 	return &Generator[T]{
 		ID:   id,
 		Name: name,
 		State: &GeneratorState{
 			Status: GENERATOR_STATUS_NEW,
 		},
-		ThreadConfig: config,
 	}
 }
 func (g *Generator[T]) Size() int {
