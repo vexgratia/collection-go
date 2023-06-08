@@ -3,6 +3,8 @@ package fan
 import (
 	"context"
 	"reflect"
+
+	. "github.com/vexgratia/collection-go/helpers/channels"
 )
 
 func FanIn[T any](ctx context.Context, output chan T, inputs ...chan T) {
@@ -17,6 +19,20 @@ func FanIn[T any](ctx context.Context, output chan T, inputs ...chan T) {
 			continue
 		default:
 			output <- data.Interface().(T)
+		}
+	}
+}
+func FanOut[T any](ctx context.Context, input chan T, outputs ...chan T) {
+	for {
+		select {
+		case data := <-input:
+			for _, output := range outputs {
+				output <- data
+			}
+		case <-ctx.Done():
+			break
+		default:
+			continue
 		}
 	}
 }

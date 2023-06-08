@@ -1,4 +1,4 @@
-package fan
+package channels
 
 import (
 	"context"
