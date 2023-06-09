@@ -55,7 +55,7 @@ func TestAddContext(t *testing.T) {
 		func(t *testing.T) {
 			for _, test := range intCases {
 				cases := MakeCases(test.chans...)
-				ctxIndex := AddContext(cases, ctx)
+				cases, ctxIndex := AddContext(cases, ctx)
 				AssertEqual(t, ctxIndex, test.want)
 			}
 		})
@@ -63,7 +63,7 @@ func TestAddContext(t *testing.T) {
 		func(t *testing.T) {
 			for _, test := range stringCases {
 				cases := MakeCases(test.chans...)
-				ctxIndex := AddContext(cases, ctx)
+				cases, ctxIndex := AddContext(cases, ctx)
 				AssertEqual(t, ctxIndex, test.want)
 			}
 		})
@@ -71,7 +71,7 @@ func TestAddContext(t *testing.T) {
 		func(t *testing.T) {
 			for _, test := range float64Cases {
 				cases := MakeCases(test.chans...)
-				ctxIndex := AddContext(cases, ctx)
+				cases, ctxIndex := AddContext(cases, ctx)
 				AssertEqual(t, ctxIndex, test.want)
 			}
 		})
@@ -81,7 +81,7 @@ func TestAddDefault(t *testing.T) {
 		func(t *testing.T) {
 			for _, test := range intCases {
 				cases := MakeCases(test.chans...)
-				ctxIndex := AddDefault(cases)
+				cases, ctxIndex := AddDefault(cases)
 				AssertEqual(t, ctxIndex, test.want)
 			}
 		})
@@ -89,7 +89,7 @@ func TestAddDefault(t *testing.T) {
 		func(t *testing.T) {
 			for _, test := range stringCases {
 				cases := MakeCases(test.chans...)
-				ctxIndex := AddDefault(cases)
+				cases, ctxIndex := AddDefault(cases)
 				AssertEqual(t, ctxIndex, test.want)
 			}
 		})
@@ -97,7 +97,7 @@ func TestAddDefault(t *testing.T) {
 		func(t *testing.T) {
 			for _, test := range float64Cases {
 				cases := MakeCases(test.chans...)
-				ctxIndex := AddDefault(cases)
+				cases, ctxIndex := AddDefault(cases)
 				AssertEqual(t, ctxIndex, test.want)
 			}
 		})

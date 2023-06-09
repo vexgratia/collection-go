@@ -9,16 +9,17 @@ import (
 
 func FanIn[T any](ctx context.Context, output chan T, inputs ...chan T) {
 	cases := MakeCases(inputs...)
-	ctxIndex := AddContext(cases, ctx)
-	defaultIndex := AddDefault(cases)
+	cases, ctxIndex := AddContext(cases, ctx)
+	cases, defaultIndex := AddDefault(cases)
 	for {
-		switch index, data, _ := reflect.Select(cases); index {
-		case ctxIndex:
-			break
-		case defaultIndex:
-			continue
-		default:
+		index, data, _ := reflect.Select(cases)
+		switch {
+		case index < ctxIndex:
 			output <- data.Interface().(T)
+		case index == ctxIndex:
+			break
+		case index == defaultIndex:
+			continue
 		}
 	}
 }

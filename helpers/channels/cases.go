@@ -12,11 +12,11 @@ func MakeCases[T any](chans ...chan T) []reflect.SelectCase {
 	}
 	return cases
 }
-func AddContext(cases []reflect.SelectCase, ctx context.Context) int {
+func AddContext(cases []reflect.SelectCase, ctx context.Context) ([]reflect.SelectCase, int) {
 	cases = append(cases, reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(ctx.Done())})
-	return len(cases) - 1
+	return cases, len(cases) - 1
 }
-func AddDefault(cases []reflect.SelectCase) int {
+func AddDefault(cases []reflect.SelectCase) ([]reflect.SelectCase, int) {
 	cases = append(cases, reflect.SelectCase{Dir: reflect.SelectDefault})
-	return len(cases) - 1
+	return cases, len(cases) - 1
 }
