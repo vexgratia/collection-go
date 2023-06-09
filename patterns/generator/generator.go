@@ -1,8 +1,10 @@
-package pool
+package generator
 
 import (
 	"context"
 	"sync/atomic"
+
+	. "github.com/vexgratia/collection-go/patterns/task"
 )
 
 type GeneratorStatus int

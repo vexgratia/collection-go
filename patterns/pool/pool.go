@@ -3,6 +3,8 @@ package pool
 import (
 	"context"
 	"sync/atomic"
+
+	. "github.com/vexgratia/collection-go/patterns/task"
 )
 
 type PoolStatus int

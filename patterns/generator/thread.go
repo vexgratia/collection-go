@@ -1,6 +1,10 @@
-package pool
+package generator
 
-import "context"
+import (
+	"context"
+
+	. "github.com/vexgratia/collection-go/patterns/task"
+)
 
 type ThreadStatus int
 
