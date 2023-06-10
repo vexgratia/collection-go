@@ -19,21 +19,21 @@ const (
 	POOL_STATUS_TERMINATED_TIMEOUT
 )
 
-type Pool[T any] struct {
+type Pool[I, O any] struct {
 	ID      int
 	Name    string
 	State   *PoolState
 	CTX     context.Context
-	Workers []*Worker[T]
-	Inputs  []chan *Task[T]
+	Workers []*Worker[I, O]
+	Inputs  []chan *Task[I, O]
 }
 type PoolState struct {
 	Status    PoolStatus
 	Processed atomic.Uint64
 }
 
-func NewPool[T any](id int, name string) *Pool[T] {
-	return &Pool[T]{
+func NewPool[I, O any](id int, name string) *Pool[I, O] {
+	return &Pool[I, O]{
 		ID:   id,
 		Name: name,
 		State: &PoolState{

@@ -19,14 +19,14 @@ const (
 	GENERATOR_STATUS_TERMINATED_TIMEOUT
 )
 
-type Generator[T any] struct {
+type Generator[I, O any] struct {
 	ID       int
 	Name     string
 	State    *GeneratorState
 	CTX      context.Context
-	Threads  []*Thread[T]
-	Generate func(current uint64, example T) (*Task[T], error)
-	Example  T
+	Threads  []*Thread[I, O]
+	Generate func(current uint64, example I) (*Task[I, O], error)
+	Example  I
 }
 type GeneratorState struct {
 	Status  GeneratorStatus
@@ -34,8 +34,8 @@ type GeneratorState struct {
 	Goal    atomic.Uint64
 }
 
-func NewGenerator[T any](id int, name string) *Generator[T] {
-	return &Generator[T]{
+func NewGenerator[I, O any](id int, name string) *Generator[I, O] {
+	return &Generator[I, O]{
 		ID:   id,
 		Name: name,
 		State: &GeneratorState{
@@ -43,6 +43,6 @@ func NewGenerator[T any](id int, name string) *Generator[T] {
 		},
 	}
 }
-func (g *Generator[T]) Size() int {
+func (g *Generator[I, O]) Size() int {
 	return len(g.Threads)
 }

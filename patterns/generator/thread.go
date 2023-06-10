@@ -18,23 +18,23 @@ const (
 	THREAD_STATUS_TERMINATED_TIMEOUT
 )
 
-type Thread[T any] struct {
+type Thread[I, O any] struct {
 	ID        int
-	Generator *Generator[T]
+	Generator *Generator[I, O]
 	Status    ThreadStatus
 	CTX       context.Context
-	Output    chan *Task[T]
+	Output    chan *Task[I, O]
 }
 
-func NewThread[T any](id int) *Thread[T] {
-	return &Thread[T]{
+func NewThread[I, O any](id int) *Thread[I, O] {
+	return &Thread[I, O]{
 		ID:     id,
 		Status: THREAD_STATUS_NEW,
-		Output: make(chan *Task[T]),
+		Output: make(chan *Task[I, O]),
 	}
 }
 
-func (t *Thread[T]) Start() {
+func (t *Thread[I, O]) Start() {
 	for {
 		select {
 		case <-t.CTX.Done():
@@ -44,7 +44,7 @@ func (t *Thread[T]) Start() {
 		}
 	}
 }
-func (t *Thread[T]) Generate() error {
+func (t *Thread[I, O]) Generate() error {
 	current := t.Generator.State.Current.Add(1)
 	if current >= t.Generator.State.Goal.Load() {
 		return nil

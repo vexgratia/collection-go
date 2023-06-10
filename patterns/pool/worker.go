@@ -18,19 +18,19 @@ const (
 	WORKER_STATUS_TERMINATED_TIMEOUT
 )
 
-type Worker[T any] struct {
+type Worker[I, O any] struct {
 	ID     int
-	Pool   *Pool[T]
+	Pool   *Pool[I, O]
 	Status WorkerStatus
 	CTX    context.Context
-	Input  chan *Task[T]
-	Output chan *Task[T]
+	Input  chan *Task[I, O]
+	Output chan *Task[I, O]
 }
 
-func NewWorker[T any](id int) *Worker[T] {
-	return &Worker[T]{
+func NewWorker[I, O any](id int) *Worker[I, O] {
+	return &Worker[I, O]{
 		ID:     id,
 		Status: WORKER_STATUS_NEW,
-		Output: make(chan *Task[T]),
+		Output: make(chan *Task[I, O]),
 	}
 }
