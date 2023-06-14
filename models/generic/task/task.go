@@ -6,6 +6,21 @@ import (
 	"time"
 )
 
+type Task[I, O any] struct {
+	ID       int
+	Name     string
+	Status   TaskStatus
+	CTX      context.Context
+	LocalCTX context.Context
+	Done     chan struct{}
+	Timeout  time.Duration
+	Stop     context.CancelFunc
+	Input    I
+	Process  func(input I) (O, error)
+	Output   O
+	Error    error
+}
+
 type TaskStatus int
 
 const (
@@ -18,19 +33,14 @@ const (
 	TASK_STATUS_TERMINATED_TIMEOUT
 )
 
-type Task[I, O any] struct {
-	ID       int
-	Name     string
-	Status   TaskStatus
-	CTX      context.Context
-	LocalCTX context.Context
-	Done     chan struct{}
-	Stop     context.CancelFunc
-	Error    error
-	Timeout  time.Duration
-	Input    I
-	Process  func(input I) (O, error)
-	Output   O
+type TaskError int
+
+const (
+	NOT_READY TaskError = iota
+)
+
+var TASK_ERROR = map[TaskError]error{
+	NOT_READY: fmt.Errorf("task is not ready"),
 }
 
 func NewTask[I, O any](ctx context.Context, id int, name string) *Task[I, O] {
@@ -65,7 +75,7 @@ func (t *Task[I, O]) Ready() bool {
 func (t *Task[I, O]) Execute() error {
 	if !t.Ready() {
 		t.Status = TASK_STATUS_TERMINATED
-		return fmt.Errorf("task is not ready")
+		return TASK_ERROR[NOT_READY]
 	}
 	t.Status = TASK_STATUS_IN_PROCESS
 	go func() {
