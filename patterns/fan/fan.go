@@ -4,7 +4,7 @@ import (
 	"context"
 	"reflect"
 
-	. "github.com/vexgratia/collection-go/helpers/channels"
+	. "github.com/vexgratia/collection-go/helpers/chan/cases"
 )
 
 func FanIn[T any](ctx context.Context, output chan T, inputs ...chan T) {
