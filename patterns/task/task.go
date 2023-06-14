@@ -28,9 +28,9 @@ type Task[I, O any] struct {
 	Stop     context.CancelFunc
 	Error    error
 	Timeout  time.Duration
-	Process  func(input []I) ([]O, error)
-	Input    []I
-	Output   []O
+	Input    I
+	Process  func(input I) (O, error)
+	Output   O
 }
 
 func NewTask[I, O any](ctx context.Context, id int, name string) *Task[I, O] {
@@ -43,7 +43,7 @@ func NewTask[I, O any](ctx context.Context, id int, name string) *Task[I, O] {
 	}
 }
 
-func (t *Task[I, O]) Prepare(timeout time.Duration, process func(input []I) ([]O, error), input []I) {
+func (t *Task[I, O]) Prepare(timeout time.Duration, input I, process func(input I) (O, error)) {
 	t.Process = process
 	t.Input = input
 	t.Timeout = timeout
