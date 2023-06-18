@@ -1,13 +1,14 @@
-package sll
+package dll
 
 import "fmt"
 
 type Node[T any] struct {
 	Value T
 	Next  *Node[T]
+	Prev  *Node[T]
 }
 
-func ListNode[T any](value T) *Node[T] {
+func NewNode[T any](value T) *Node[T] {
 	return &Node[T]{
 		Value: value,
 	}
@@ -36,10 +37,11 @@ func (l *List[T]) Len() int {
 }
 
 func (l *List[T]) Push(value T) {
-	node := ListNode(value)
+	node := NewNode(value)
 	if l.Len() == 0 {
 		l.Tail = node
 	} else {
+		l.Head.Prev = node
 		node.Next = l.Head
 	}
 	l.Head = node
@@ -47,6 +49,7 @@ func (l *List[T]) Push(value T) {
 }
 func (l *List[T]) Trim() {
 	l.Head = l.Head.Next
+	l.Head.Prev = nil
 	l.Length--
 }
 
@@ -63,7 +66,7 @@ func (l *List[T]) Print() {
 		fmt.Printf("%v", node.Value)
 		node = node.Next
 		if node != nil {
-			fmt.Printf(" -> ")
+			fmt.Printf(" <-> ")
 		}
 	}
 	fmt.Printf("\n")
