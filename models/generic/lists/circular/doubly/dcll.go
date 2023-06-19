@@ -57,7 +57,12 @@ func (l *List[T]) Trim() {
 	l.Tail.Next = l.Head
 	l.Length--
 }
-
+func (l *List[T]) ScrollNext() {
+	l.Tail, l.Head = l.Head, l.Head.Next
+}
+func (l *List[T]) ScrollPrev() {
+	l.Tail, l.Head = l.Tail.Prev, l.Tail
+}
 func (l *List[T]) Clear() {
 	l.Head = nil
 	l.Tail = nil
