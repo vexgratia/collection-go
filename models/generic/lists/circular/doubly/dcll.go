@@ -1,6 +1,9 @@
 package dcll
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type Node[T any] struct {
 	Value T
@@ -24,13 +27,16 @@ func (l *List[T]) InMiddle(node *Node[T]) bool {
 }
 
 type List[T any] struct {
+	Mu     *sync.Mutex
 	Head   *Node[T]
 	Tail   *Node[T]
 	Length int
 }
 
 func New[T any]() *List[T] {
-	return &List[T]{}
+	return &List[T]{
+		Mu: &sync.Mutex{},
+	}
 }
 func (l *List[T]) Len() int {
 	return l.Length
@@ -38,6 +44,7 @@ func (l *List[T]) Len() int {
 
 func (l *List[T]) Push(value T) {
 	node := NewNode(value)
+	l.Mu.Lock()
 	if l.Len() == 0 {
 		l.Tail = node
 		node.Next = node
@@ -50,23 +57,32 @@ func (l *List[T]) Push(value T) {
 	}
 	l.Head = node
 	l.Length++
+	l.Mu.Unlock()
 }
 func (l *List[T]) Trim() {
+	l.Mu.Lock()
 	l.Head = l.Head.Next
 	l.Head.Prev = l.Tail
 	l.Tail.Next = l.Head
 	l.Length--
+	l.Mu.Unlock()
 }
 func (l *List[T]) ScrollNext() {
+	l.Mu.Lock()
 	l.Tail, l.Head = l.Head, l.Head.Next
+	l.Mu.Unlock()
 }
 func (l *List[T]) ScrollPrev() {
+	l.Mu.Lock()
 	l.Tail, l.Head = l.Tail.Prev, l.Tail
+	l.Mu.Unlock()
 }
 func (l *List[T]) Clear() {
+	l.Mu.Lock()
 	l.Head = nil
 	l.Tail = nil
 	l.Length = 0
+	l.Mu.Unlock()
 }
 
 func (l *List[T]) Print() {
@@ -76,6 +92,7 @@ func (l *List[T]) Print() {
 		return
 	}
 	fmt.Printf(" ... <-> ")
+	l.Mu.Lock()
 	head := l.Head
 	node := head
 	for {
@@ -83,9 +100,10 @@ func (l *List[T]) Print() {
 		node = node.Next
 		if node == head {
 			fmt.Printf(" <-> ...\n")
-			return
+			break
 		} else {
 			fmt.Printf(" <-> ")
 		}
 	}
+	l.Mu.Unlock()
 }
