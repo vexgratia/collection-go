@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vexgratia/collection-go/helpers/test/assert"
+	"github.com/vexgratia/collection-go/helper/test/assert"
 )
 
 type TestCase[I, O any] struct {

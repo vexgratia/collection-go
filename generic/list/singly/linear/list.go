@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	node "github.com/vexgratia/collection-go/models/generic/list/singly"
+	node "github.com/vexgratia/collection-go/generic/list/singly"
 )
 
 // A List is a generic linear data structure.
@@ -51,12 +51,9 @@ func (l *List[T]) PeekAll() []T {
 	all := make([]T, 0)
 	l.mu.Lock()
 	current := l.head
-	for {
+	for current != nil {
 		all = append(all, current.Value)
-		current := current.Next
-		if current == l.head {
-			break
-		}
+		current = current.Next
 	}
 	l.mu.Unlock()
 	return all
@@ -73,7 +70,6 @@ func (l *List[T]) Push(values ...T) {
 			node.Next = l.head
 		}
 		l.head = node
-		l.tail.Next = l.head
 		l.length++
 	}
 	l.mu.Unlock()
@@ -87,7 +83,6 @@ func (l *List[T]) Trim() {
 		panic("can't trim, list is empty")
 	}
 	l.mu.Lock()
-	l.tail.Next = l.head.Next
 	l.head = l.head.Next
 	l.length--
 	l.mu.Unlock()
@@ -105,30 +100,32 @@ func (l *List[T]) Clear() {
 // Sprint formats values from the List using their default formats and returns the resulting string.
 func (l *List[T]) Sprint() string {
 	var sprint string
-	if l.Empty() {
-		return sprint
+	l.mu.Lock()
+	current := l.head
+	for current != nil {
+		sprint += fmt.Sprintf("%v", current.Value)
+		current = current.Next
+		if current != nil {
+			sprint += " -> "
+		}
 	}
-	all := l.PeekAll()
-	sprint += "... -> "
-	for _, val := range all {
-		sprint += fmt.Sprintf("%v -> ", val)
-	}
-	sprint += "..."
+	l.mu.Unlock()
 	return sprint
 }
 
 // Sprintf formats values from the List using formatter function and returns the resulting string.
 func (l *List[T]) Sprintf(formatter func(value T) string) string {
 	var sprint string
-	if l.Empty() {
-		return sprint
+	l.mu.Lock()
+	current := l.head
+	for current != nil {
+		sprint += fmt.Sprintf("%s", formatter(current.Value))
+		current = current.Next
+		if current != nil {
+			sprint += " -> "
+		}
 	}
-	all := l.PeekAll()
-	sprint += "... -> "
-	for _, val := range all {
-		sprint += fmt.Sprintf("%s -> ", formatter(val))
-	}
-	sprint += "..."
+	l.mu.Unlock()
 	return sprint
 }
 
