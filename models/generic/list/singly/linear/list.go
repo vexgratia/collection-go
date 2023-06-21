@@ -1,8 +1,10 @@
-package sll
+package list
 
 import (
 	"fmt"
 	"sync"
+
+	node "github.com/vexgratia/collection-go/models/generic/list/singly"
 )
 
 // A List is a generic linear data structure.
@@ -12,15 +14,9 @@ import (
 // List is thread-safe.
 type List[T any] struct {
 	mu     *sync.Mutex
-	head   *Node[T]
-	tail   *Node[T]
+	head   *node.Node[T]
+	tail   *node.Node[T]
 	length uint64
-}
-
-// A Node represents a generic node in a singly linked list.
-type Node[T any] struct {
-	Value T
-	next  *Node[T]
 }
 
 // New creates an empty List of type T.
@@ -66,13 +62,11 @@ func (l *List[T]) PeekAll() []T {
 func (l *List[T]) Push(values ...T) {
 	l.mu.Lock()
 	for _, val := range values {
-		node := &Node[T]{
-			Value: val,
-		}
+		node := node.New(val)
 		if l.Len() == 0 {
 			l.tail = node
 		} else {
-			node.next = l.head
+			node.Next = l.head
 		}
 		l.head = node
 		l.length++
@@ -88,7 +82,7 @@ func (l *List[T]) Trim() {
 		panic("can't trim, list is empty")
 	}
 	l.mu.Lock()
-	l.head = l.head.next
+	l.head = l.head.Next
 	l.length--
 	l.mu.Unlock()
 }
