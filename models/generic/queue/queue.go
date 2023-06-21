@@ -33,7 +33,7 @@ func (q *Queue[T]) Empty() bool {
 	return q.Len() == 0
 }
 
-// Peek returns the last item that's been Enqueued.
+// Peek returns the last item that's been enqueued.
 //
 // If the Queue is empty, panic occurs.
 func (q *Queue[T]) Peek() T {
@@ -48,18 +48,13 @@ func (q *Queue[T]) PeekAll() []T {
 	return q.items
 }
 
-// Enqueue inserts value in the end of the Queue.
-func (q *Queue[T]) Enqueue(value T) {
+// Enqueue inserts items in the end of the Queue.
+func (q *Queue[T]) Enqueue(items ...T) {
 	q.mu.Lock()
-	q.items = append(q.items, value)
-	q.mu.Unlock()
-}
-
-// Enqueue inserts multiple values in the end of the Queue.
-func (q *Queue[T]) EnqueueAll(values ...T) {
-	for _, val := range values {
-		q.Enqueue(val)
+	for _, item := range items {
+		q.items = append(q.items, item)
 	}
+	q.mu.Unlock()
 }
 
 // Dequeue removes and returns item from the front of the Queue.
@@ -76,7 +71,7 @@ func (q *Queue[T]) Dequeue() T {
 	return deq
 }
 
-// DequeueAll removes and returns all values from the Queue.
+// DequeueAll removes and returns all items from the Queue.
 func (q *Queue[T]) DequeueAll() []T {
 	all := make([]T, 0)
 	q.mu.Lock()
@@ -105,18 +100,34 @@ func (q *Queue[T]) Clear() {
 	q.mu.Unlock()
 }
 
-// Print writes all items from the queue to standard output.
-func (q *Queue[T]) Print() {
+// Sprint formats items from the Queue using their default formats and returns the resulting string.
+func (q *Queue[T]) Sprint() string {
+	var sprint string
+	q.mu.Lock()
 	for _, item := range q.items {
-		fmt.Printf("%v ", item)
+		sprint += fmt.Sprintf("%v ", item)
 	}
-	fmt.Printf("\n")
+	q.mu.Unlock()
+	return sprint
 }
 
-// Printf calls formatter function on each item of the Queue and writes results to standard output.
-func (q *Queue[T]) Printf(formatter func(T) string) {
+// Sprintf formats items from the Queue using formatter function and returns the resulting string.
+func (q *Queue[T]) Sprintf(formatter func(item T) string) string {
+	var sprint string
+	q.mu.Lock()
 	for _, item := range q.items {
-		fmt.Printf("%s ", formatter(item))
+		sprint += fmt.Sprintf("%s ", formatter(item))
 	}
-	fmt.Printf("\n")
+	q.mu.Unlock()
+	return sprint
+}
+
+// Print formats items from the Queue using their default formats and writes resulting string to standart output.
+func (q *Queue[T]) Print() {
+	fmt.Printf("%s\n", q.Sprint())
+}
+
+// Printf formats items from the Queue using formatter function and writes resulting string to standart output.
+func (q *Queue[T]) Printf(formatter func(item T) string) {
+	fmt.Printf("%s\n", q.Sprintf(formatter))
 }
