@@ -5,11 +5,11 @@ import (
 	"sync"
 )
 
-// A Queue[T] is a generic thread-safe linear data structure.
+// A Queue is a generic linear data structure.
 //
-// Queue[T] is based on slice of type T.
+// Queue is based on slice of type T.
 //
-// Queue[T] is thread-safe.
+// Queue is thread-safe.
 type Queue[T any] struct {
 	mu    *sync.Mutex
 	items []T
@@ -48,11 +48,11 @@ func (q *Queue[T]) PeekAll() []T {
 	return q.items
 }
 
-// Enqueue inserts items in the end of the Queue.
-func (q *Queue[T]) Enqueue(items ...T) {
+// Enqueue inserts values in the end of the Queue.
+func (q *Queue[T]) Enqueue(values ...T) {
 	q.mu.Lock()
-	for _, item := range items {
-		q.items = append(q.items, item)
+	for _, val := range values {
+		q.items = append(q.items, val)
 	}
 	q.mu.Unlock()
 }
@@ -103,22 +103,20 @@ func (q *Queue[T]) Clear() {
 // Sprint formats items from the Queue using their default formats and returns the resulting string.
 func (q *Queue[T]) Sprint() string {
 	var sprint string
-	q.mu.Lock()
-	for _, item := range q.items {
+	all := q.PeekAll()
+	for _, item := range all {
 		sprint += fmt.Sprintf("%v ", item)
 	}
-	q.mu.Unlock()
 	return sprint
 }
 
 // Sprintf formats items from the Queue using formatter function and returns the resulting string.
 func (q *Queue[T]) Sprintf(formatter func(item T) string) string {
 	var sprint string
-	q.mu.Lock()
-	for _, item := range q.items {
+	all := q.PeekAll()
+	for _, item := range all {
 		sprint += fmt.Sprintf("%s ", formatter(item))
 	}
-	q.mu.Unlock()
 	return sprint
 }
 
