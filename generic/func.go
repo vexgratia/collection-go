@@ -8,6 +8,8 @@ type MinFunc[T any] func(values ...T) T
 
 type MaxFunc[T any] func(values ...T) T
 
+type FilterFunc[T any] func(a T) bool
+
 func MakeMinFunc[T any](less LessFunc[T]) MinFunc[T] {
 	return func(values ...T) T {
 		if len(values) == 0 {

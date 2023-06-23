@@ -1,9 +1,12 @@
 package node
 
-// A Node represents a generic node in a singly linked list.
+// This file contains the implementation of generic doubly linked Node and its basic methods.
+
+// A Node represents a generic node in a doubly linked list.
 type Node[T any] struct {
 	Value T
 	Next  *Node[T]
+	Prev  *Node[T]
 }
 
 // New creates a Node using value.
