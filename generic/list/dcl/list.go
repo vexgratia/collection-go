@@ -1,16 +1,16 @@
 package list
 
-// This file contains the implementation of generic SLL and its basic methods.
+// This file contains the implementation of generic DCL and its basic methods.
 
 import (
 	"sync"
 
-	node "github.com/vexgratia/collection-go/generic/node/singly"
+	node "github.com/vexgratia/collection-go/generic/node/doubly"
 )
 
-// A List is a generic implementation of SLL.
+// A List is a generic implementation of DCL.
 //
-// List is based on singly linked Nodes of type T.
+// List is based on doubly linked Nodes of type T.
 //
 // List is thread-safe.
 type List[T any] struct {
@@ -44,9 +44,13 @@ func (l *List[T]) Push(values ...T) {
 		node := node.New(val)
 		if l.Len() == 0 {
 			node.Next = node
+			node.Prev = node
 			l.tail = node
 		} else {
 			node.Next = l.head
+			node.Prev = l.tail
+			l.head.Prev = node
+			l.tail.Next = node
 		}
 		l.head = node
 		l.length++
@@ -63,16 +67,21 @@ func (l *List[T]) Trim() {
 	}
 	l.mu.Lock()
 	l.head = l.head.Next
+	l.head.Prev = l.tail
 	l.length--
 	l.mu.Unlock()
 }
 
 // Collect returns values of all nodes from the List.
 func (l *List[T]) Collect() []T {
-	all := make([]T, 0)
+	var all []T
+	if l.Empty() {
+		return all
+	}
 	l.mu.Lock()
-	current := l.head
-	for current != nil {
+	all = append(all, l.head.Value)
+	current := l.head.Next
+	for current != l.head {
 		all = append(all, current.Value)
 		current = current.Next
 	}
@@ -96,5 +105,12 @@ func (l *List[T]) Clear() {
 	l.head = nil
 	l.tail = nil
 	l.length = 0
+	l.mu.Unlock()
+}
+
+// Scroll moves head and tail nodes towards next.
+func (l *List[T]) Scroll() {
+	l.mu.Lock()
+	l.head, l.tail = l.head.Next, l.tail.Next
 	l.mu.Unlock()
 }

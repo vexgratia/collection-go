@@ -1,6 +1,6 @@
 package list
 
-// This file contains the implementation of generic SLL and its basic methods.
+// This file contains the implementation of generic SCL and its basic methods.
 
 import (
 	"sync"
@@ -8,7 +8,7 @@ import (
 	node "github.com/vexgratia/collection-go/generic/node/singly"
 )
 
-// A List is a generic implementation of SLL.
+// A List is a generic implementation of SCL.
 //
 // List is based on singly linked Nodes of type T.
 //
@@ -47,6 +47,7 @@ func (l *List[T]) Push(values ...T) {
 			l.tail = node
 		} else {
 			node.Next = l.head
+			l.tail.Next = node
 		}
 		l.head = node
 		l.length++
@@ -63,6 +64,7 @@ func (l *List[T]) Trim() {
 	}
 	l.mu.Lock()
 	l.head = l.head.Next
+	l.tail.Next = l.head
 	l.length--
 	l.mu.Unlock()
 }
@@ -96,5 +98,12 @@ func (l *List[T]) Clear() {
 	l.head = nil
 	l.tail = nil
 	l.length = 0
+	l.mu.Unlock()
+}
+
+// Scroll moves head and tail nodes towards next.
+func (l *List[T]) Scroll() {
+	l.mu.Lock()
+	l.head, l.tail = l.head.Next, l.tail.Next
 	l.mu.Unlock()
 }
