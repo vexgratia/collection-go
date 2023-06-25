@@ -108,9 +108,16 @@ func (l *List[T]) Clear() {
 	l.mu.Unlock()
 }
 
-// Scroll moves head and tail nodes towards next.
-func (l *List[T]) Scroll() {
+// ScrollNext moves head and tail nodes towards next.
+func (l *List[T]) ScrollNext() {
 	l.mu.Lock()
 	l.head, l.tail = l.head.Next, l.tail.Next
+	l.mu.Unlock()
+}
+
+// ScrollPrev moves head and tail nodes towards previous.
+func (l *List[T]) ScrollPrev() {
+	l.mu.Lock()
+	l.head, l.tail = l.head.Prev, l.tail.Prev
 	l.mu.Unlock()
 }
