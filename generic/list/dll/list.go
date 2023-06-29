@@ -43,8 +43,6 @@ func (l *List[T]) Push(values ...T) {
 	for _, val := range values {
 		node := node.New(val)
 		if l.Len() == 0 {
-			node.Next = node
-			node.Prev = node
 			l.tail = node
 		} else {
 			node.Next = l.head
@@ -77,9 +75,8 @@ func (l *List[T]) Collect() []T {
 		return all
 	}
 	l.mu.Lock()
-	all = append(all, l.head.Value)
-	current := l.head.Next
-	for current != l.head {
+	current := l.head
+	for current != nil {
 		all = append(all, current.Value)
 		current = current.Next
 	}
